@@ -456,8 +456,25 @@ def find_compile_json(search_path):
                 return path
     return None
 
+def get_task_params():
+    """
+    获取需要任务参数
+    """
+    task_request_file = os.environ.get("TASK_REQUEST")
+    with open(task_request_file, 'r') as fr:
+        task_request = json.load(fr)
+    task_params = task_request["task_params"]
+    return task_params
+
 
 if __name__ == '__main__':
+    params = get_task_params()
+    pre_cmd = params["pre_cmd"]
+    if pre_cmd:
+        print("pre_cmd : ", pre_cmd)
+        process = subprocess.Popen(shlex.split(pre_cmd), cwd=source_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        outputs, _ = process.communicate()
+
     # 可通过环境变量指定compile_commands.json路径
     if os.environ.get("COMPILE_JSON", None):
         compile_json = os.environ.get("COMPILE_JSON")
@@ -465,7 +482,7 @@ if __name__ == '__main__':
         compile_json = find_compile_json(source_dir)
     if not compile_json:
         raise "未能找到compile_commands.json"
-    print(compile_json)
+    print("compile_json : ", compile_json)
     source_file = []
     # Print IWYU commands
     ver = True
