@@ -456,6 +456,15 @@ def find_compile_json(search_path):
                 return path
     return None
 
+def search_file():
+    """ Search c/c++ file and return list """
+    g = os.walk(source_dir)
+    mark_file = []
+    for path, dir_list, file_list in g:
+        for file_name in file_list:
+            if file_name.endswith(".c") or file_name.endswith(".cpp") or file_name.endswith(".cc"):
+                mark_file.append(os.path.join(path, file_name))
+    return mark_file
 
 if __name__ == '__main__':
     # 可通过环境变量指定compile_commands.json路径
@@ -464,7 +473,14 @@ if __name__ == '__main__':
     else:
         compile_json = find_compile_json(source_dir)
     if not compile_json:
-        raise "未能找到compile_commands.json"
+        print("未能找到compile_commands.json")
+        mark_file = search_file()
+        invocations = []
+        for file_name in mark_file:
+            command = [IWYU_EXECUTABLE]
+            command.append(file_name)
+            invocations.append(Invocation(command, source_dir))
+            execute(invocations, True, 2, 0)
     print(compile_json)
     source_file = []
     # Print IWYU commands
@@ -473,4 +489,4 @@ if __name__ == '__main__':
     job_number = 2
     load = 0
     extra = []
-    sys.exit(main(compile_json, source_file, ver, job_number, load, extra))
+    main(compile_json, source_file, ver, job_number, load, extra)
