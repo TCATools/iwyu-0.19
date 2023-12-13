@@ -484,6 +484,8 @@ if __name__ == '__main__':
         for file_name in obj_file:
             command = [IWYU_EXECUTABLE]
             command.append(file_name)
+            command.append("-Xiwyu")
+            command.append("--no_fwd_decls")
             invocations.append(Invocation(command, source_dir))
             execute(invocations, True, 4, 0)
     print(compile_json)
