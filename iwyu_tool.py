@@ -485,13 +485,13 @@ if __name__ == '__main__':
             command = [IWYU_EXECUTABLE]
             command.append(file_name)
             invocations.append(Invocation(command, source_dir))
-            execute(invocations, True, 2, 0)
+            execute(invocations, True, 4, 0)
     print(compile_json)
     source_file = []
     # Print IWYU commands
     ver = True
     # Number of concurrent subprocesses
-    job_number = 2
+    job_number = 4
     load = 0
     extra = []
     main(compile_json, source_file, ver, job_number, load, extra)
