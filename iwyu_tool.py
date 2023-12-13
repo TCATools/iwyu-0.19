@@ -475,8 +475,13 @@ if __name__ == '__main__':
     if not compile_json:
         print("未能找到compile_commands.json")
         mark_file = search_file()
+        scan_files_env = os.getenv("SCAN_FILES")
+        if scan_files_env and os.path.exists(scan_files_env):
+            with open(scan_files_env, "r") as rf:
+                scan_files = json.load(rf)
+        obj_file = set(mark_file).intersection(scan_files)
         invocations = []
-        for file_name in mark_file:
+        for file_name in obj_file:
             command = [IWYU_EXECUTABLE]
             command.append(file_name)
             invocations.append(Invocation(command, source_dir))
