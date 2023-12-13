@@ -487,13 +487,14 @@ if __name__ == '__main__':
             command.append("-Xiwyu")
             command.append("--no_fwd_decls")
             invocations.append(Invocation(command, source_dir))
-            execute(invocations, True, 4, 0)
-    print(compile_json)
-    source_file = []
-    # Print IWYU commands
-    ver = True
-    # Number of concurrent subprocesses
-    job_number = 4
-    load = 0
-    extra = []
-    main(compile_json, source_file, ver, job_number, load, extra)
+        execute(invocations, True, 4, 0)
+    else:
+        print(compile_json)
+        source_file = []
+        # Print IWYU commands
+        ver = True
+        # Number of concurrent subprocesses
+        job_number = 4
+        load = 0
+        extra = ["-Xiwyu", "--no_fwd_decls"]
+        main(compile_json, source_file, ver, job_number, load, extra)
