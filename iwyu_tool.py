@@ -16,6 +16,7 @@ import sys
 import json
 import time
 import shlex
+import stat
 import copy
 import tempfile
 import subprocess
@@ -466,7 +467,46 @@ def search_file():
                 mark_file.append(os.path.join(path, file_name))
     return mark_file
 
+def generate_shell_file(cmd, shell_name="tca_build"):
+    """
+    将编译命令保存到bash/bat的脚本文件中,并赋予可执行权限,返回执行该脚本文件的命令
+    :param cmd: 编译命令字符串
+    :param shell_name: 生成的shell文件名
+    :return: 执行该脚本文件的命令
+    """
+    work_dir = os.getcwd()
+
+    file_name = f"{shell_name}.sh"
+    shell_filepath = os.path.join(work_dir, file_name)
+    # 格式化文件路径
+    with open(shell_filepath, "w") as wf:
+        wf.write(cmd)
+    # 给文件授权可执行权限
+    os.chmod(shell_filepath, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+    return "bash %s" % shell_filepath
+
+def get_task_params():
+    """
+    获取需要任务参数
+    """
+    task_request_file = os.environ.get("TASK_REQUEST")
+    if not os.path.exists(task_request_file):
+        return {}
+    with open(task_request_file, 'r') as fr:
+        task_request = json.load(fr)
+    task_params = task_request["task_params"]
+    return task_params
+
 if __name__ == '__main__':
+    task_params = get_task_params()
+    if task_params:
+        build_cmd = task_params.get("build_cmd")
+        if not build_cmd:
+            print("未能找到编译命令，建议在分析方案配置编译命令，编译生成compile_commands.json")
+        process_build_cmd = generate_shell_file(build_cmd)
+        build_process = subprocess.Popen(shlex.split(process_build_cmd), stdout=subprocess.STDOUT, stderr=subprocess.STDOUT,
+                                   cwd=source_dir)
+        build_process.wait()
     # 可通过环境变量指定compile_commands.json路径
     if os.environ.get("COMPILE_JSON", None):
         compile_json = os.environ.get("COMPILE_JSON")
