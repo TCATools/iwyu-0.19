@@ -504,8 +504,12 @@ if __name__ == '__main__':
         if not build_cmd:
             print("未能找到编译命令，建议在分析方案配置编译命令，编译生成compile_commands.json")
         process_build_cmd = generate_shell_file(build_cmd)
-        build_process = subprocess.Popen(shlex.split(process_build_cmd), stdout=subprocess.STDOUT, stderr=subprocess.STDOUT,
-                                   cwd=source_dir)
+        build_process = subprocess.Popen(
+            shlex.split(process_build_cmd), 
+            stdout=subprocess.STDOUT, 
+            stderr=subprocess.STDOUT, 
+            cwd=source_dir,
+            shell=False)
         build_process.wait()
     # 可通过环境变量指定compile_commands.json路径
     if os.environ.get("COMPILE_JSON", None):
