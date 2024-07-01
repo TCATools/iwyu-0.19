@@ -508,7 +508,7 @@ if __name__ == '__main__':
             shlex.split(process_build_cmd), 
             stdout=subprocess.STDOUT, 
             stderr=subprocess.STDOUT, 
-            cwd=source_dir,
+            cwd=os.path.join(source_dir),
             shell=False)
         build_process.wait()
     # 可通过环境变量指定compile_commands.json路径
