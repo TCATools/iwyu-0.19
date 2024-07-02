@@ -503,6 +503,7 @@ if __name__ == '__main__':
         if not build_cmd:
             print("未能找到编译命令，建议在分析方案配置编译命令，编译生成compile_commands.json")
         process_build_cmd = generate_shell_file(build_cmd)
+        print("build cmd: %s" % process_build_cmd)
         build_process = subprocess.Popen(
             shlex.split(process_build_cmd), 
             stdout=subprocess.PIPE, 
