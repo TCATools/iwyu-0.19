@@ -506,7 +506,7 @@ if __name__ == '__main__':
         process_build_cmd = generate_shell_file(build_cmd)
         build_process = subprocess.Popen(
             shlex.split(process_build_cmd), 
-            stdout=subprocess.STDOUT, 
+            stdout=subprocess.PIPE, 
             stderr=subprocess.STDOUT, 
             cwd=os.path.join(source_dir),
             shell=False)
