@@ -503,14 +503,19 @@ if __name__ == '__main__':
         if not build_cmd:
             print("未能找到编译命令，建议在分析方案配置编译命令，编译生成compile_commands.json")
         process_build_cmd = generate_shell_file(build_cmd)
-        print("build cmd: %s" % process_build_cmd)
+        build_log = tempfile.TemporaryFile(prefix='tca_build')
         build_process = subprocess.Popen(
             shlex.split(process_build_cmd), 
-            stdout=subprocess.PIPE, 
+            stdout=build_log, 
             stderr=subprocess.STDOUT, 
             cwd=os.path.join(source_dir),
             shell=False)
         build_process.wait()
+        build_log.seek(0)
+        build_output= build_log.read().decode("utf-8")
+        build_log.close()
+        for build_line in build_output.splitlines():
+            print(build_line)
     # 可通过环境变量指定compile_commands.json路径
     if os.environ.get("COMPILE_JSON", None):
         compile_json = os.environ.get("COMPILE_JSON")
@@ -536,7 +541,7 @@ if __name__ == '__main__':
         print(compile_json)
         source_file = []
         # Print IWYU commands
-        ver = True
+        ver = False
         # Number of concurrent subprocesses
         job_number = 4
         load = 0
