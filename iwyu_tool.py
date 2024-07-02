@@ -22,6 +22,7 @@ import tempfile
 import subprocess
 
 source_dir = os.getenv("SOURCE_DIR")
+work_dir = os.getenv("RESULT_DIR")
 pwd = os.getcwd()
 CORRECT_RE = re.compile(r'^\((.*?) has correct #includes/fwd-decls\)$')
 SHOULD_ADD_RE = re.compile(r'^(.*?) should add these lines:$')
@@ -474,8 +475,6 @@ def generate_shell_file(cmd, shell_name="tca_build"):
     :param shell_name: 生成的shell文件名
     :return: 执行该脚本文件的命令
     """
-    work_dir = os.getcwd()
-
     file_name = f"{shell_name}.sh"
     shell_filepath = os.path.join(work_dir, file_name)
     # 格式化文件路径
